@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Simulador de taquilla de cine con cartelera, boletas, confitería, descuentos y pagos. Proyecto de JavaScript con funciones y arrays.">
+  <title>Cine Aurora | Simulador de Taquilla</title>
+  <style>
+    :root {
+      --noche: #0e1020;
+      --noche-2: #171a33;
+      --carmesi: #c1273d;
+      --oro: #e8b84a;
+      --crema: #f6f1e7;
+      --gris: #9aa0b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "Segoe UI", Helvetica, Arial, sans-serif; background: var(--noche); color: var(--crema); line-height: 1.6; }
+    h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; font-weight: 600; }
+
+    header {
+      text-align: center;
+      padding: 5rem 1.5rem 4rem;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(193,39,61,.35), transparent 55%),
+        radial-gradient(circle at 85% 100%, rgba(232,184,74,.18), transparent 50%),
+        var(--noche-2);
+      border-bottom: 3px solid var(--oro);
+    }
+    .marca { letter-spacing: .4em; text-transform: uppercase; font-size: .85rem; color: var(--oro); margin-bottom: 1rem; }
+    header h1 { font-size: clamp(2rem, 5vw, 3.3rem); margin-bottom: 1rem; }
+    header p { max-width: 620px; margin: 0 auto; color: #d9d6cf; }
+    .aviso { display: inline-block; margin-top: 1.8rem; border: 1px solid var(--oro); color: var(--oro); padding: .55rem 1.4rem; border-radius: 50px; font-size: .9rem; }
+
+    main { max-width: 1100px; margin: 0 auto; padding: 3.5rem 1.5rem; }
+    section { margin-bottom: 4.5rem; }
+    section > h2 { text-align: center; font-size: 1.9rem; color: var(--oro); margin-bottom: .4rem; }
+    .sub { text-align: center; color: var(--gris); margin-bottom: 2rem; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.4rem; }
+    .peli { background: var(--noche-2); border-radius: 14px; overflow: hidden; border: 1px solid #272b4d; transition: transform .2s, box-shadow .2s; }
+    .peli:hover { transform: translateY(-5px); box-shadow: 0 12px 26px rgba(0,0,0,.45); }
+    .afiche { position: relative; height: 150px; display: flex; align-items: center; justify-content: center; font-size: 3.2rem; }
+    .a1 { background: linear-gradient(135deg, #5b2a86, #c1273d); }
+    .a2 { background: linear-gradient(135deg, #a8325e, #f08a5d); }
+    .a3 { background: linear-gradient(135deg, #7a1a1a, #1c1c2e); }
+    .a4 { background: linear-gradient(135deg, #1f8a70, #3fc1c9); }
+    .a5 { background: linear-gradient(135deg, #f9a826, #c1273d); }
+    .a6 { background: linear-gradient(135deg, #2c3e6b, #5c7aea); }
+    .a7 { background: linear-gradient(135deg, #1a2a1a, #3e5c3a); }
+    .a8 { background: linear-gradient(135deg, #14264f, #6a3df0); }
+    .a9 { background: linear-gradient(135deg, #e0577e, #f6b26b); }
+    .a10 { background: linear-gradient(135deg, #3aa0d8, #8ad87a); }
+    .num { position: absolute; top: .6rem; left: .6rem; width: 1.9rem; height: 1.9rem; line-height: 1.9rem; text-align: center; border-radius: 50%; background: var(--oro); color: var(--noche); font-size: .85rem; font-weight: 700; font-family: "Segoe UI", sans-serif; }
+    .cuerpo { padding: 1rem 1rem 1.2rem; }
+    .cuerpo h3 { font-size: 1.05rem; margin-bottom: .2rem; }
+    .meta { font-size: .82rem; color: var(--gris); }
+    .etiquetas { margin-top: .6rem; display: flex; gap: .4rem; flex-wrap: wrap; }
+    .etq { font-size: .72rem; padding: .1rem .55rem; border-radius: 50px; border: 1px solid #3a3f6b; color: #cfd3ea; }
+    .etq.edad { border-color: var(--carmesi); color: #ff9aa9; }
+
+    .caja { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.2rem; }
+    .dato { background: var(--noche-2); border: 1px solid #272b4d; border-radius: 14px; padding: 1.3rem 1.8rem; text-align: center; min-width: 230px; }
+    .dato strong { display: block; font-size: 1.5rem; color: var(--oro); font-family: Georgia, serif; }
+    .dato small { color: var(--gris); }
+
+    ol { max-width: 680px; margin: 0 auto; padding-left: 1.4rem; }
+    ol li { margin-bottom: .6rem; }
+    code { background: #272b4d; padding: .1rem .45rem; border-radius: 5px; color: var(--oro); }
+
+    footer { background: #090a16; color: var(--gris); text-align: center; padding: 1.8rem 1rem; font-size: .9rem; border-top: 1px solid #272b4d; }
+  </style>
+  <script src="main.js" defer></script>
+</head>
+<body>
+
+  <header>
+    <p class="marca">Cine Aurora</p>
+    <h1>Simulador de Taquilla</h1>
+    <p>Vende boletas, agrega confitería, aplica descuentos y administra la cartelera. Todo desde ventanas emergentes y la consola.</p>
+    <span class="aviso">El simulador inicia al cargar la página · Recarga (Cmd/Ctrl + R) para reiniciar</span>
+  </header>
+
+  <main>
+    <section>
+      <h2>En cartelera</h2>
+      <p class="sub">Estas 5 películas están en cartelera al iniciar. El número de cada tarjeta es el que escribes en el simulador.</p>
+      <div class="grid">
+        <article class="peli"><div class="afiche a1"><span class="num">1</span>🎭</div><div class="cuerpo"><h3>La Última Función</h3><p class="meta">Drama · 128 min</p><div class="etiquetas"><span class="etq edad">+12</span><span class="etq">2D</span><span class="etq">$17.000</span></div></div></article>
+        <article class="peli"><div class="afiche a2"><span class="num">2</span>🌠</div><div class="cuerpo"><h3>Noche de Estrellas</h3><p class="meta">Romance · 112 min</p><div class="etiquetas"><span class="etq edad">Todo público</span><span class="etq">2D</span><span class="etq">$17.000</span></div></div></article>
+        <article class="peli"><div class="afiche a3"><span class="num">3</span>🚨</div><div class="cuerpo"><h3>Código Rojo 7</h3><p class="meta">Acción · 134 min</p><div class="etiquetas"><span class="etq edad">+16</span><span class="etq">3D</span><span class="etq">$22.000</span></div></div></article>
+        <article class="peli"><div class="afiche a4"><span class="num">4</span>🎮</div><div class="cuerpo"><h3>Mundo Pixelado</h3><p class="meta">Animación · 98 min</p><div class="etiquetas"><span class="etq edad">Todo público</span><span class="etq">3D</span><span class="etq">$21.000</span></div></div></article>
+        <article class="peli"><div class="afiche a5"><span class="num">5</span>🎶</div><div class="cuerpo"><h3>Ritmo Latino</h3><p class="meta">Musical · 109 min</p><div class="etiquetas"><span class="etq edad">Todo público</span><span class="etq">2D</span><span class="etq">$17.000</span></div></div></article>
+      </div>
+    </section>
+
+    <section>
+      <h2>Próximamente</h2>
+      <p class="sub">Estas películas están en el catálogo y se pueden sumar desde <strong>Gestionar cartelera</strong></p>
+      <div class="grid">
+        <article class="peli"><div class="afiche a6"><span class="num">6</span>🔦</div><div class="cuerpo"><h3>El Faro Escondido</h3><p class="meta">Misterio · 119 min</p><div class="etiquetas"><span class="etq edad">+12</span><span class="etq">2D</span></div></div></article>
+        <article class="peli"><div class="afiche a7"><span class="num">7</span>🌲</div><div class="cuerpo"><h3>Sombras del Bosque</h3><p class="meta">Terror · 105 min</p><div class="etiquetas"><span class="etq edad">+16</span><span class="etq">2D</span></div></div></article>
+        <article class="peli"><div class="afiche a8"><span class="num">8</span>⏳</div><div class="cuerpo"><h3>Atrapa el Tiempo</h3><p class="meta">Ciencia ficción · 141 min</p><div class="etiquetas"><span class="etq edad">+12</span><span class="etq">3D</span></div></div></article>
+        <article class="peli"><div class="afiche a9"><span class="num">9</span>💞</div><div class="cuerpo"><h3>Corazones en Bogotá</h3><p class="meta">Comedia romántica · 101 min</p><div class="etiquetas"><span class="etq edad">+7</span><span class="etq">2D</span></div></div></article>
+        <article class="peli"><div class="afiche a10"><span class="num">10</span>😂</div><div class="cuerpo"><h3>Risas en Familia</h3><p class="meta">Comedia · 95 min</p><div class="etiquetas"><span class="etq edad">Todo público</span><span class="etq">2D</span></div></div></article>
+      </div>
+    </section>
+
+    <section>
+      <h2>Beneficios y tarifas</h2>
+      <p class="sub">Todo se calcula automáticamente en el simulador</p>
+      <div class="caja">
+        <div class="dato"><strong>5% · 10% · 15%</strong>Descuento por grupo<br><small>desde 4, 6 y 10 boletas</small></div>
+        <div class="dato"><strong>Estudiante −20%</strong>Niño / Adulto mayor −30%<br><small>sobre el valor de la boleta</small></div>
+        <div class="dato"><strong>Formato 3D</strong>+$5.000 por boleta<br><small>impoconsumo del 8%</small></div>
+        <div class="dato"><strong>Cupones</strong>AURORA10 · ESTRENO5 · CINEFILO15<br><small>se suman al descuento por grupo</small></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>¿Cómo funciona?</h2>
+      <p class="sub">Sigue el menú del simulador</p>
+      <ol>
+        <li>Escribe el nombre del cliente cuando el simulador lo pida.</li>
+        <li>En el menú principal elige una opción del <strong>1 al 7</strong>: comprar boletas, confitería, ver pedido, quitar ítems, cupón, gestionar cartelera o finalizar.</li>
+        <li>Al comprar, elige la película, el horario, el tipo de boleta y la cantidad. Las películas +12 y +16 piden la edad del espectador.</li>
+        <li>En <strong>Gestionar cartelera</strong> puedes agregar, retirar, buscar y reemplazar películas.</li>
+        <li>Al finalizar, elige el método de pago y revisa el tiquete en la alerta y en la consola (<code>F12</code>).</li>
+      </ol>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2026 Cine Aurora · Proyecto de JavaScript · Funciones y Arrays</p>
+  </footer>
+
+</body>
+</html>
